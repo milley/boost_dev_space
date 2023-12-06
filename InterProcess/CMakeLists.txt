@@ -1,0 +1,1 @@
+add_executable(unnamed_memory_block "unnamed_memory_block.cpp")
