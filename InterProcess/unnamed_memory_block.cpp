@@ -89,12 +89,7 @@ int main(int argc, char *argv[])
 
         // Get buffer local address from handle
         void *msg = segment.get_address_from_handle(handle);
-        // Person *pPerson = (Person *)msg;
-        // Person person_arr[2];
-        //  for (int i = 0; i < 2; i++)
-        //  {
-        //      person_arr[i] = *(pPerson + i * sizeof(Person));
-        //  }
+
         Person person_arr[2];
         memcpy(person_arr, msg, sizeof(Person) * 2);
 
