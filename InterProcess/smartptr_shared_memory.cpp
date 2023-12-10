@@ -1,5 +1,8 @@
 #include <boost/interprocess/managed_shared_memory.hpp>
 #include <boost/interprocess/offset_ptr.hpp>
+#include <iostream>
+#include <string>
+using namespace std;
 
 using namespace boost::interprocess;
 
@@ -36,14 +39,43 @@ int main(int argc, char *argv[])
                 prev->next = current;
         }
 
+        // offset_ptr<list_node> head = first;
+        // cout << "In parent process: " << endl;
+        // while (head.get())
+        // {
+        //     cout << head->value << " ";
+        //     head = head->next;
+        // }
+
+        list_node *node = segment.construct<list_node>("MyData")();
+        node->next = first;
+
         // Communicate list to other processes
         // ...
+        string s(argv[0]);
+        s += " child ";
+        if (0 != std::system(s.c_str()))
+            return 1;
+
         // When done, destroy list
         for (current = first; current; /**/)
         {
             prev = current;
             current = current->next;
             segment.deallocate(prev.get());
+        }
+    }
+    else
+    {
+        managed_shared_memory segment(open_only, "MySharedMemory");
+        list_node *node = segment.find<list_node>("MyData").first;
+
+        offset_ptr<list_node> head = node->next;
+        cout << "In child process: " << endl;
+        while (head.get())
+        {
+            cout << head->value << " ";
+            head = head->next;
         }
     }
 
